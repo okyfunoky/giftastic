@@ -1,9 +1,24 @@
 var initialAnimalArray = ["dog","cat","pengiun","macaque"];
+$(document).on("click", ".gif", updateGifState);
 
 function createButtons(){
     initialAnimalArray.forEach(animal =>{
         createButton(animal);
     });
+};
+
+function updateGifState(){
+    var state = $(this).attr("data-state");
+    
+    if(state === "still"){
+      $(this).attr("src",$(this).attr("data-animate"));
+      $(this).attr("data-state","animate")
+    }
+
+    if(state === "animate"){
+      $(this).attr("src",$(this).attr("data-still"));
+      $(this).attr("data-state","still")
+    }
 }
 
 function createButton(animal){
@@ -18,7 +33,7 @@ function createButton(animal){
     //attach button
     $('#buttonsrow').append(newButton);
 
-}
+};
 
 function populateGifs(animal){
     //hit api
@@ -34,13 +49,12 @@ function populateGifs(animal){
         response.data.forEach(data =>{
             populateGif(animal, data);
         });
-        
       });
-}
+};
 
 function clearGifs(){
     $('gifs-column').clear();
-}
+};
 
 function populateGif(animal, data){
     var gifDiv = $('<div>');
@@ -48,12 +62,16 @@ function populateGif(animal, data){
     label.text("Rating: " + data.rating);
     gifDiv.append(label);
     var newGif = $('<img>');
+    newGif.addClass("gif");
     newGif.attr("alt", animal + " gif")
-    newGif.attr("src",data.images.fixed_height.url)
+    newGif.attr("data-animate",data.images.fixed_height.url);
+    newGif.attr("src",data.images.fixed_height_still.url);
+    newGif.attr("data-still",data.images.fixed_height_still.url);
+    newGif.attr("data-state","still");
     //update html
     $(gifDiv).append(newGif);
     $('#gifs-column').append(gifDiv);
-}
+};
 
 createButtons();
 populateGifs("bear");
