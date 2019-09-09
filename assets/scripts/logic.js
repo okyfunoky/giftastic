@@ -1,5 +1,14 @@
 var initialAnimalArray = ["dog","cat","pengiun","macaque"];
 $(document).on("click", ".gif", updateGifState);
+$(document).on("click", ".animalButton", populateGifs);
+
+$('#addnewbuttonbutton').on("click", function(event){
+    event.preventDefault();
+    var newAnimal = $("#animalform").val();
+    console.log("New Animal: " + newAnimal);
+    createButton(newAnimal);
+    $("#animalform").val("");
+});
 
 function createButtons(){
     initialAnimalArray.forEach(animal =>{
@@ -22,21 +31,18 @@ function updateGifState(){
 }
 
 function createButton(animal){
-    //create button
     var newButton = $('<button>')
-    //add animal name as value
-    newButton.attr("data-animal",animal);
+    newButton.attr("data-animal", animal);
     newButton.text(animal);
-    //add animalbutton class
     newButton.addClass("animalButton");
     newButton.addClass("btn btn-primary");
-    //attach button
     $('#buttonsrow').append(newButton);
 
 };
 
-function populateGifs(animal){
-    //hit api
+function populateGifs(){
+    clearGifs();
+    var animal = $(this).attr("data-animal");
     var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
     animal + "&api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9&limit=5";
     
@@ -44,8 +50,6 @@ function populateGifs(animal){
         url: queryURL,
         method: "GET"
       }).then(function (response) {
-        console.log(queryURL);
-        
         response.data.forEach(data =>{
             populateGif(animal, data);
         });
@@ -53,7 +57,7 @@ function populateGifs(animal){
 };
 
 function clearGifs(){
-    $('gifs-column').clear();
+    $('#gifs-column').empty();
 };
 
 function populateGif(animal, data){
@@ -74,4 +78,3 @@ function populateGif(animal, data){
 };
 
 createButtons();
-populateGifs("bear");
